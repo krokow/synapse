@@ -1,12 +1,14 @@
 // Supabase : authentification + données utilisateurs.
 import { CFG, hueFromString } from './util.js';
 
+// Garder la même URL que le <link rel="modulepreload"> de index.html.
 const SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/+esm';
 
 let sb = null;
 
 export const state = {
-  enabled: false, // Supabase configuré et chargé
+  enabled: Boolean(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY), // Supabase configuré
+  ready: false, // session Supabase restaurée (ou pas de Supabase)
   user: null,
   profile: null,
   ratings: new Map(), // movie_id -> ligne ratings
@@ -18,28 +20,31 @@ const emit = (type) => bus.dispatchEvent(new Event(type));
 
 export const isLogged = () => Boolean(state.user && state.profile);
 
+/** Charge supabase-js et restaure la session, puis émet 'ready'. Ne bloque pas l'affichage. */
 export async function initAuth() {
-  if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY) return;
-  try {
-    const { createClient } = await import(SUPABASE_CDN);
-    sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
-    });
-    state.enabled = true;
-    const { data } = await sb.auth.getSession();
-    await applySession(data.session);
-    sb.auth.onAuthStateChange((_event, session) => {
-      // Ne jamais awaiter d'appel Supabase ici (risque de blocage) : on diffère.
-      setTimeout(() => applySession(session), 0);
-    });
-  } catch (err) {
-    console.error('[SYNAPSE] Supabase indisponible', err);
-    state.enabled = false;
-    sb = null;
+  if (state.enabled) {
+    try {
+      const { createClient } = await import(SUPABASE_CDN);
+      sb = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+      });
+      const { data } = await sb.auth.getSession();
+      await applySession(data.session, true);
+      sb.auth.onAuthStateChange((_event, session) => {
+        // Ne jamais awaiter d'appel Supabase ici (risque de blocage) : on diffère.
+        setTimeout(() => applySession(session), 0);
+      });
+    } catch (err) {
+      console.error('[SYNAPSE] Supabase indisponible', err);
+      state.enabled = false;
+      sb = null;
+    }
   }
+  state.ready = true;
+  emit('ready');
 }
 
-async function applySession(session) {
+async function applySession(session, silent = false) {
   const prevId = state.user?.id ?? null;
   const nextUser = session?.user ?? null;
   state.user = nextUser;
@@ -51,7 +56,7 @@ async function applySession(session) {
     state.ratings.clear();
     state.watchlist.clear();
   }
-  emit('auth');
+  if (!silent) emit('auth');
 }
 
 async function loadUserData() {

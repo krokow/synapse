@@ -3,7 +3,7 @@ import { $, $$, esc, avatarHTML, toast } from './util.js';
 import * as tmdb from './tmdb.js';
 import { initAuth, bus, state, isLogged } from './store.js';
 import { refreshBadges } from './components.js';
-import { openMovie, closeModal, isOpen, setCloseHandler, renderUserBits } from './modal.js';
+import { openMovie, closeModal, isOpen, setCloseHandler, refreshUserParts } from './modal.js';
 import { startBackground } from './bg.js';
 import * as views from './views.js';
 
@@ -102,7 +102,9 @@ function setActiveNav(name) {
 
 function renderAccount() {
   const box = $('#account');
-  if (!state.enabled) {
+  if (state.enabled && !state.ready) {
+    box.innerHTML = `<span class="tag tag-ghost">sync…</span>`;
+  } else if (!state.enabled) {
     box.innerHTML = `<span class="tag tag-ghost" title="Supabase non configuré">mode lecture</span>`;
   } else if (isLogged()) {
     const u = state.profile.username;
@@ -133,9 +135,22 @@ bus.addEventListener('auth', () => {
   if (page === null) return;
   if (isOpen()) {
     renderPage(page.path, page.query, page.key);
-    renderUserBits();
+    refreshUserParts();
   } else {
     route(true);
+  }
+});
+// Session restaurée : on ne rerend que ce qui dépend du compte.
+const AUTH_PAGES = /^\/(transmissions|reseau|profil\/|acces)/;
+bus.addEventListener('ready', () => {
+  renderAccount();
+  if (page === null) return;
+  refreshUserParts();
+  if (AUTH_PAGES.test(page.path)) {
+    renderPage(page.path, page.query, page.key);
+  } else {
+    onData?.(); // ex. le Flux ajoute la rangée « Ta watchlist » sans tout recharger
+    refreshBadges();
   }
 });
 bus.addEventListener('data', () => {
@@ -155,16 +170,21 @@ async function boot() {
 
   const hadToken = /access_token=|error_description=/.test(location.hash);
   const errMatch = location.hash.match(/error_description=([^&]+)/);
-  main.innerHTML = `<div class="boot"><span class="glitch-text" data-text="CONNEXION AU RÉSEAU…">CONNEXION AU RÉSEAU…</span></div>`;
-  await Promise.race([initAuth(), new Promise((r) => setTimeout(r, 6000))]);
   renderAccount();
 
   if (hadToken) {
+    // Retour d'un lien de confirmation : supabase-js doit lire le jeton dans l'URL avant qu'on la nettoie.
+    main.innerHTML = `<div class="boot"><span class="glitch-text" data-text="CONNEXION AU RÉSEAU…">CONNEXION AU RÉSEAU…</span></div>`;
+    await initAuth();
     history.replaceState(null, '', location.pathname + location.search + '#/');
     if (errMatch) toast('Lien invalide : ' + decodeURIComponent(errMatch[1].replace(/\+/g, ' ')), 'err');
     else if (isLogged()) toast('Email confirmé. Connexion établie, choom.', 'ok');
+    route();
+    return;
   }
+  // Le Flux s'affiche tout de suite ; le compte se branche en parallèle.
   route();
+  initAuth();
 }
 
 boot();

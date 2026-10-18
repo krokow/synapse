@@ -7,7 +7,19 @@ import { cardHTML, rowHTML, rowSkeleton, gridHTML, gridSkeleton, refreshBadges, 
 
 const notSeen = (m) => !state.ratings.has(m.id) && !state.watchlist.has(m.id);
 
+const LOADING = `<div class="boot"><span class="glitch-text" data-text="CONNEXION AU RÉSEAU…">CONNEXION AU RÉSEAU…</span></div>`;
+
+/** Page qui a besoin de Supabase : affiche un chargement tant que la session n'est pas restaurée. */
+function waitReady(main) {
+  if (state.enabled && !state.ready) {
+    main.innerHTML = LOADING;
+    return true;
+  }
+  return false;
+}
+
 function needAccount(main, what) {
+  if (waitReady(main)) return true;
   if (!state.enabled) {
     main.innerHTML = `<div class="empty"><p class="empty-glyph">⌁</p><p>Mode lecture : les comptes sont désactivés sur ce nœud.</p><p class="muted">Configure Supabase dans <code>config.js</code> pour activer ${esc(what)}.</p></div>`;
     return true;
@@ -103,7 +115,9 @@ export async function home(main, { alive, onData }) {
   refreshBadges(main);
   onData(() => {
     const row = $('#wl-row');
-    if (row) row.outerHTML = watchlistRow();
+    if (row) row.outerHTML = isLogged() ? watchlistRow() : '';
+    else if (isLogged()) $('#rows')?.insertAdjacentHTML('beforeend', watchlistRow());
+    refreshBadges(main);
   });
 }
 
@@ -347,6 +361,7 @@ export async function roulette(main, { alive }) {
 
 // ============ LE RÉSEAU ============
 export async function reseau(main, { alive }) {
+  if (waitReady(main)) return;
   if (!state.enabled) {
     main.innerHTML = `<div class="empty"><p class="empty-glyph">⌁</p><p>Le Réseau est hors ligne : Supabase n'est pas configuré.</p></div>`;
     return;
@@ -395,6 +410,7 @@ function computeSync(mine, theirs) {
 }
 
 export async function profil(main, ctx) {
+  if (waitReady(main)) return;
   const { alive, params } = ctx;
   if (!state.enabled) {
     main.innerHTML = `<div class="empty"><p class="empty-glyph">⌁</p><p>Profils indisponibles : Supabase n'est pas configuré.</p></div>`;
@@ -516,6 +532,7 @@ export async function profil(main, ctx) {
 
 // ============ ACCÈS (connexion / inscription) ============
 export function auth(main, { query }) {
+  if (waitReady(main)) return;
   if (!state.enabled) {
     main.innerHTML = `<div class="empty"><p class="empty-glyph">⌁</p><p>Mode lecture : les comptes sont désactivés (Supabase non configuré).</p><a class="btn btn-ghost" href="#/">Retour au Flux</a></div>`;
     return;

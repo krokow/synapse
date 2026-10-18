@@ -245,6 +245,10 @@ export function renderUserBits() {
 
   const box = $('#m-rate', el);
   if (!box) return;
+  if (state.enabled && !state.ready) {
+    box.innerHTML = '<p class="muted">Connexion au Réseau…</p>';
+    return;
+  }
   if (!state.enabled) {
     box.innerHTML = `<p class="muted">Mode lecture : les comptes sont désactivés sur ce nœud.</p>`;
     return;
@@ -330,9 +334,17 @@ async function copyLink() {
   toast('Lien copié. Partage le signal.', 'ok');
 }
 
+/** Rafraîchit tout ce qui dépend de Supabase (après connexion / restauration de session). */
+export function refreshUserParts() {
+  if (!current || modal().hidden) return;
+  renderUserBits();
+  loadCommunity(current.id);
+}
+
 async function loadCommunity(movieId) {
   const box = document.getElementById('m-community');
   if (!box) return;
+  if (state.enabled && !state.ready) return;
   if (!state.enabled) {
     box.innerHTML = '<p class="muted">Le Réseau communautaire est hors ligne (mode lecture).</p>';
     return;
