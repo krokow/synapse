@@ -28,12 +28,14 @@ export function configScreen(main) {
       <ol class="steps">
         <li>Crée un compte sur <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a>, puis va dans <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">Paramètres › API</a>.</li>
         <li>Copie la <strong>clé API (v3)</strong> ou le <strong>jeton d'accès en lecture (v4, commence par "eyJ")</strong>.</li>
-        <li>Ouvre <code>config.js</code> à la racine du dépôt et colle-la dans <code>TMDB_API_KEY</code>.</li>
+        <li>Recommandé : stocke-la dans le secret <code>TMDB_TOKEN</code> du relais Supabase (<code>supabase/functions/tmdb</code>) et renseigne <code>TMDB_PROXY_URL</code> dans <code>config.js</code> : la clé reste invisible.</li>
+        <li>Ou, plus simple mais visible publiquement : colle-la dans <code>TMDB_API_KEY</code> de <code>config.js</code>.</li>
         <li>Optionnel : renseigne <code>SUPABASE_URL</code> et <code>SUPABASE_ANON_KEY</code> pour activer les comptes (sinon, mode lecture).</li>
         <li>Pousse sur GitHub et recharge la page.</li>
       </ol>
       <pre class="code">window.SYNAPSE_CONFIG = {
-  TMDB_API_KEY: "ta_clé_ou_eyJ...",
+  TMDB_PROXY_URL: "https://xxxx.supabase.co/functions/v1/tmdb",
+  TMDB_API_KEY: "",
   SUPABASE_URL: "https://xxxx.supabase.co",
   SUPABASE_ANON_KEY: "eyJ...",
   LANG: "fr-FR",

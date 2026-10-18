@@ -4,13 +4,16 @@ import { CFG } from './util.js';
 const BASE = 'https://api.themoviedb.org/3';
 const cache = new Map();
 
-export const hasKey = () => Boolean(CFG.TMDB_API_KEY);
-const isV4 = () => CFG.TMDB_API_KEY.startsWith('eyJ');
+// Relais (Edge Function Supabase) prioritaire : la clé reste alors côté serveur.
+const useProxy = () => Boolean(CFG.TMDB_PROXY_URL);
+export const hasKey = () => useProxy() || Boolean(CFG.TMDB_API_KEY);
+const isV4 = () => !useProxy() && CFG.TMDB_API_KEY.startsWith('eyJ');
 
 export async function get(path, params = {}) {
-  const url = new URL(BASE + path);
+  const url = new URL(useProxy() ? CFG.TMDB_PROXY_URL : BASE + path);
   const all = { language: CFG.LANG, ...params };
-  if (!isV4()) all.api_key = CFG.TMDB_API_KEY;
+  if (useProxy()) all.path = path;
+  else if (!isV4()) all.api_key = CFG.TMDB_API_KEY;
   for (const [k, v] of Object.entries(all)) {
     if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
   }

@@ -1,7 +1,7 @@
 // Utilitaires partagés : config, échappement, DOM, avatars, toasts.
 
 export const CFG = Object.assign(
-  { TMDB_API_KEY: '', SUPABASE_URL: '', SUPABASE_ANON_KEY: '', LANG: 'fr-FR', REGION: 'FR' },
+  { TMDB_API_KEY: '', TMDB_PROXY_URL: '', SUPABASE_URL: '', SUPABASE_ANON_KEY: '', LANG: 'fr-FR', REGION: 'FR' },
   window.SYNAPSE_CONFIG || {}
 );
 for (const k of Object.keys(CFG)) if (typeof CFG[k] === 'string') CFG[k] = CFG[k].trim();

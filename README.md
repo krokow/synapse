@@ -11,8 +11,20 @@ Application web **100 % statique** (HTML / CSS / JS vanilla en modules ES, sans 
 
 ## Mise en route
 
-### 1. TMDB
-Crée une clé sur <https://www.themoviedb.org/settings/api> : clé **v3** ou **jeton de lecture v4** (`eyJ…`), les deux marchent.
+### 1. TMDB via le relais Supabase (clé cachée)
+La clé TMDB n'est **jamais** dans le code : une Edge Function Supabase ([`supabase/functions/tmdb/index.ts`](supabase/functions/tmdb/index.ts)) relaie les requêtes et garde le token en secret côté serveur. Elle n'accepte que les endpoints utilisés par le site et que les origines autorisées.
+
+Depuis le tableau de bord Supabase (aucune CLI nécessaire) :
+1. **Edge Functions › Secrets** : ajoute
+   - `TMDB_TOKEN` = ton jeton de lecture v4 (`eyJ…`) ou ta clé v3 (<https://www.themoviedb.org/settings/api>) ;
+   - `ALLOWED_ORIGINS` = `https://krokow.github.io,http://localhost:8000`.
+2. **Edge Functions › Deploy a new function › Via Editor** : nomme-la exactement `tmdb`, colle le contenu de `index.ts`, puis **Deploy**.
+3. Dans les réglages de la fonction `tmdb`, **désactive « Enforce JWT verification »** (le site appelle le relais sans jeton).
+4. Dans `config.js`, `TMDB_PROXY_URL` = `https://<projet>.supabase.co/functions/v1/tmdb`.
+
+Avec la CLI : `supabase secrets set TMDB_TOKEN=… ALLOWED_ORIGINS=…` puis `supabase functions deploy tmdb --no-verify-jwt`.
+
+*Alternative sans relais* : mets la clé directement dans `TMDB_API_KEY` (elle sera alors visible publiquement) et laisse `TMDB_PROXY_URL` vide.
 
 ### 2. Supabase (optionnel — sinon mode lecture sans comptes)
 1. Ouvre ton projet Supabase › **SQL Editor** › *New query*, colle le contenu de [`supabase/schema.sql`](supabase/schema.sql) et lance **Run**.
@@ -23,14 +35,15 @@ Crée une clé sur <https://www.themoviedb.org/settings/api> : clé **v3** ou **
 ### 3. `config.js`
 ```js
 window.SYNAPSE_CONFIG = {
-  TMDB_API_KEY: "…",
+  TMDB_PROXY_URL: "https://xxxx.supabase.co/functions/v1/tmdb",
+  TMDB_API_KEY: "",
   SUPABASE_URL: "https://xxxx.supabase.co",
   SUPABASE_ANON_KEY: "…",
   LANG: "fr-FR",
   REGION: "FR",
 };
 ```
-⚠ Ce fichier est servi publiquement : n'y mets **jamais** la clé `service_role`. La clé anon est faite pour être publique (les règles RLS protègent les données) ; la clé TMDB sera visible par les visiteurs, c'est inhérent à un site statique.
+⚠ Ce fichier est servi publiquement : n'y mets **jamais** la clé `service_role` / secret. L'URL Supabase et la clé publishable sont faites pour être publiques (les règles RLS protègent les données). La clé TMDB, elle, reste dans les secrets du relais.
 
 ### 4. GitHub Pages
 **Settings › Pages › Deploy from a branch**, choisis la branche et le dossier `/ (root)`. Le routage par hash (`#/…`) évite les 404.
@@ -51,6 +64,7 @@ js/tmdb.js          client TMDB + cache mémoire
 js/store.js         Supabase : auth, notes, watchlist
 js/bg.js            fond animé de nœuds neuronaux
 supabase/schema.sql tables, RLS, triggers
+supabase/functions/tmdb/index.ts  relais TMDB (Edge Function)
 ```
 
 Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB. Données de diffusion : JustWatch.

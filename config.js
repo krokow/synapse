@@ -1,17 +1,20 @@
 // ============================================================
 //  SYNAPSE — configuration
-//  Remplis les valeurs ci-dessous puis pousse le fichier sur GitHub.
-//  ⚠ Ce fichier est public une fois le site en ligne : n'y mets que
-//  la clé TMDB et la clé "anon" Supabase (jamais la clé service_role).
+//  ⚠ Ce fichier est public une fois le site en ligne. Les valeurs
+//  Supabase ci-dessous sont faites pour l'être (protégées par RLS).
+//  Ne mets JAMAIS la clé service_role / secret ici.
 // ============================================================
 window.SYNAPSE_CONFIG = {
-  // Clé API v3 (32 caractères) OU jeton de lecture v4 (commence par "eyJ")
-  // → https://www.themoviedb.org/settings/api
+  // Relais TMDB (Edge Function Supabase) : la clé TMDB reste côté serveur,
+  // dans le secret TMDB_TOKEN. Voir supabase/functions/tmdb/index.ts.
+  TMDB_PROXY_URL: "https://gwotjgmqwgyidbushbvj.supabase.co/functions/v1/tmdb",
+
+  // Alternative sans relais (clé visible publiquement) : clé v3 ou jeton v4 "eyJ…".
+  // Ignorée si TMDB_PROXY_URL est renseigné.
   TMDB_API_KEY: "",
 
-  // Supabase > Project Settings > API
-  // Laisser vide = mode lecture seule, sans comptes.
-  SUPABASE_URL: "",       // ex. "https://abcdefgh.supabase.co"
+  // Supabase > Project Settings > API Keys. Laisser vide = mode lecture sans comptes.
+  SUPABASE_URL: "https://gwotjgmqwgyidbushbvj.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_qOVkGkLW0EwvxyiP_ecs9A_3pjwhZWH", // clé "publishable" (ou ancienne "anon")
 
   LANG: "fr-FR",
