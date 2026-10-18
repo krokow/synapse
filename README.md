@@ -18,7 +18,7 @@ Crée une clé sur <https://www.themoviedb.org/settings/api> : clé **v3** ou **
 1. Ouvre ton projet Supabase › **SQL Editor** › *New query*, colle le contenu de [`supabase/schema.sql`](supabase/schema.sql) et lance **Run**.
 2. **Authentication › URL Configuration** : mets l'URL GitHub Pages du site (ex. `https://krokow.github.io/synapse/`) dans *Site URL* et dans *Redirect URLs* — c'est là qu'arrive le lien de confirmation par email.
 3. Si tu ne veux pas de confirmation par email : **Authentication › Providers › Email** › désactive *Confirm email*.
-4. Récupère l'**URL du projet** et la clé **anon / publishable** dans **Project Settings › API**.
+4. Récupère l'**URL du projet** et la clé **publishable** (`sb_publishable_…`, ou l'ancienne clé `anon`) dans **Project Settings › API Keys**.
 
 ### 3. `config.js`
 ```js

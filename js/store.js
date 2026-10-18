@@ -1,7 +1,7 @@
 // Supabase : authentification + données utilisateurs.
 import { CFG, hueFromString } from './util.js';
 
-const SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
+const SUPABASE_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/+esm';
 
 let sb = null;
 

@@ -12,7 +12,7 @@ window.SYNAPSE_CONFIG = {
   // Supabase > Project Settings > API
   // Laisser vide = mode lecture seule, sans comptes.
   SUPABASE_URL: "",       // ex. "https://abcdefgh.supabase.co"
-  SUPABASE_ANON_KEY: "",  // clé "anon" / "publishable"
+  SUPABASE_ANON_KEY: "sb_publishable_qOVkGkLW0EwvxyiP_ecs9A_3pjwhZWH", // clé "publishable" (ou ancienne "anon")
 
   LANG: "fr-FR",
   REGION: "FR",
