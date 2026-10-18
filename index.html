@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SYNAPSE — Connecte-toi à ce que tu vas aimer</title>
+  <meta name="description" content="SYNAPSE : découvre, note et partage des films dans un réseau neuronal cyberpunk.">
+  <meta name="theme-color" content="#07060d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2307060d'/%3E%3Cpath d='M14 46 L32 14 L50 46' stroke='%23ff2a6d' stroke-width='5' fill='none'/%3E%3Ccircle cx='32' cy='14' r='5' fill='%2305d9e8'/%3E%3Ccircle cx='14' cy='46' r='5' fill='%2305d9e8'/%3E%3Ccircle cx='50' cy='46' r='5' fill='%23f9f002'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://api.themoviedb.org">
+  <link rel="preconnect" href="https://image.tmdb.org">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="synth-grid" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="logo" href="#/" aria-label="SYNAPSE — accueil">
+      <span class="logo-glitch" data-text="SYN//APSE">SYN<b>//</b>APSE</span>
+    </a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a data-nav="flux" href="#/">Flux</a>
+      <a data-nav="transmissions" href="#/transmissions" data-auth-only hidden>Transmissions</a>
+      <a data-nav="reseau" href="#/reseau">Le Réseau</a>
+      <a data-nav="roulette" href="#/roulette">Roulette</a>
+      <a data-nav="recherche" href="#/recherche" class="nav-search" aria-label="Recherche">&gt;_ <span>Recherche</span></a>
+    </nav>
+    <div class="account" id="account"></div>
+  </header>
+
+  <main id="main" class="main" tabindex="-1"></main>
+
+  <footer class="footer">
+    <p class="slogan">Connecte-toi à ce que tu vas aimer.</p>
+    <p class="tmdb-attrib">
+      <a href="https://www.themoviedb.org/" target="_blank" rel="noopener" class="tmdb-logo" aria-label="The Movie Database">TMDB</a>
+      Ce produit utilise l'API TMDB mais n'est ni approuvé ni certifié par TMDB.
+      Données de diffusion fournies par JustWatch.
+    </p>
+    <p class="tiny muted">SYN//APSE · réseau neuronal cinéphile</p>
+  </footer>
+
+  <div id="modal" class="modal" hidden></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
