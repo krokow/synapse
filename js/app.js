@@ -5,6 +5,7 @@ import { initAuth, bus, state, isLogged } from './store.js';
 import { refreshBadges } from './components.js';
 import { openMovie, closeModal, isOpen, setCloseHandler, refreshUserParts } from './modal.js';
 import { startBackground } from './bg.js';
+import { initPWA } from './pwa.js';
 import * as views from './views.js';
 
 const main = document.getElementById('main');
@@ -161,6 +162,7 @@ bus.addEventListener('data', () => {
 
 // ---------- Démarrage ----------
 async function boot() {
+  initPWA();
   startBackground(document.getElementById('bg'));
   if (!tmdb.hasKey()) {
     renderAccount();

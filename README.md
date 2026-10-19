@@ -9,6 +9,14 @@ Application web **100 % statique** (HTML / CSS / JS vanilla en modules ES, sans 
 - **Transmissions** : recommandations personnalisées à partir de tes films notés 7+, et ta fréquence (genre) dominante.
 - **Roulette neuronale**, **Le Réseau** (liste des nœuds), **Profils** avec stats, histogramme, top genres et **Sync neuronale** (% de compatibilité).
 
+## Application installable (PWA)
+
+SYNAPSE s'installe comme une vraie app (icône, plein écran, sans barre de navigateur) :
+- **Android / Chrome / Edge** : bouton **⇩ Installer** dans la barre du haut, ou menu du navigateur › *Installer l'application*.
+- **iPhone / iPad** : Safari › bouton Partager › *Sur l'écran d'accueil*.
+
+Le service worker (`sw.js`) garde en cache le site, les affiches et les films déjà consultés : l'app s'ouvre et reste consultable **hors ligne** (les notes et la connexion nécessitent le réseau). Après une modification importante du site, incrémente `VERSION` dans `sw.js` pour forcer le renouvellement des caches.
+
 ## Mise en route
 
 ### 1. TMDB via le relais Supabase (clé cachée)
@@ -63,6 +71,10 @@ js/components.js    cartes, rangées, jauge d'impulsions
 js/tmdb.js          client TMDB + cache mémoire
 js/store.js         Supabase : auth, notes, watchlist
 js/bg.js            fond animé de nœuds neuronaux
+js/pwa.js           service worker + bouton d'installation
+sw.js               service worker (cache hors ligne)
+manifest.webmanifest  manifeste PWA
+icons/              logo (SVG) et icônes PNG
 supabase/schema.sql tables, RLS, triggers
 supabase/functions/tmdb/index.ts  relais TMDB (Edge Function)
 ```
