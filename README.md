@@ -74,7 +74,7 @@ js/bg.js            fond animé de nœuds neuronaux
 js/pwa.js           service worker + bouton d'installation
 sw.js               service worker (cache hors ligne)
 manifest.webmanifest  manifeste PWA
-icons/              icônes de l'app (logo SYN//APSE glitch)
+icons/              icônes de l'app (les « // » du logo sur fond noir)
 supabase/schema.sql tables, RLS, triggers
 supabase/functions/tmdb/index.ts  relais TMDB (Edge Function)
 ```
