@@ -1,6 +1,6 @@
 // SYNAPSE — service worker : app installable et consultable hors ligne.
 // Incrémente VERSION pour forcer le renouvellement de tous les caches.
-const VERSION = 'v4';
+const VERSION = 'v5';
 const SHELL = `synapse-shell-${VERSION}`;
 const DATA = `synapse-data-${VERSION}`;
 const IMAGES = `synapse-img-${VERSION}`;
