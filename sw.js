@@ -1,6 +1,6 @@
 // SYNAPSE — service worker : app installable et consultable hors ligne.
 // Incrémente VERSION pour forcer le renouvellement de tous les caches.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL = `synapse-shell-${VERSION}`;
 const DATA = `synapse-data-${VERSION}`;
 const IMAGES = `synapse-img-${VERSION}`;
@@ -23,9 +23,9 @@ const SHELL_FILES = [
   './js/util.js',
   './js/views.js',
   './js/pwa.js',
-  './icons/icon.svg',
   './icons/icon-192.png',
   './icons/favicon-32.png',
+  './icons/favicon-64.png',
 ];
 
 self.addEventListener('install', (event) => {
